@@ -1,5 +1,6 @@
 var MiModulo = (function () {
     var mockdata = [];
+    var managerList = [];
 
     mockdata["johnconnor"] = [{ author: "johnconnor", "points": [{ "x": 150, "y": 120 }, { "x": 215, "y": 115 }], "name": "house" },
     { author: "johnconnor", "points": [{ "x": 340, "y": 240 }, { "x": 15, "y": 215 }], "name": "gear" }];
@@ -165,6 +166,31 @@ var MiModulo = (function () {
                 mockdata[authname].find(function (e) { return e.name === bpname })
             );
         },
+
+        init: function(){
+            
+            console.info('initialized');
+            var canvas = document.getElementById("myCanvas"), 
+            context = canvas.getContext("2d");
+            
+            //if PointerEvent is suppported by the browser:
+            if(window.PointerEvent) {
+              canvas.addEventListener("pointerdown", 
+                function(event){
+                    
+                    alert('pointerdown at '+event.pageX+','+event.pageY);  
+                    
+                });
+            }
+            else {
+              canvas.addEventListener("mousedown", function(event){
+                          alert('mousedown at '+event.clientX+','+event.clientY);  
+      
+                }
+              );
+            }
+        },
+
         getAuthorName: getAuthorName,
         setAuthorName: setAuthorName,
         uptadeTable: uptadeTable
