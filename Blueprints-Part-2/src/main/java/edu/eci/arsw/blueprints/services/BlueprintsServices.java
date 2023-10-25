@@ -18,22 +18,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.ManagedBean;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.ApplicationScope;
 
 /**
  *
  * @author hcadavid
  */
-@ManagedBean
-@Component
-@ApplicationScope
 @Service
+@Component
 public class BlueprintsServices {
 
     @Autowired
@@ -46,6 +40,30 @@ public class BlueprintsServices {
         bpp.saveBlueprint(bp);
     }
     
+    /**
+     * 
+     * @param author blueprint's author
+     * @param bpname blueprint's name
+     * @param List<Point> blueprint's points
+     * @throws BlueprintNotFoundException if the operation fails
+     */
+    public void addBluePrintByParameters(String author, String bpName, List<List<Integer>> points) throws BlueprintPersistenceException{
+        bpp.addBluePrintByParameters(author, bpName, points);
+    }
+
+    /**
+     * 
+     * @param author blueprint's author
+     * @param bpname blueprint's name
+     * @param List<Point> blueprint's points
+     * @throws BlueprintNotFoundException if the operation fails
+     */
+    public void updateBlueprint(String author, String bpName, String newAuthor, String newName, List<List<Integer>> newPoints) throws BlueprintNotFoundException{
+        Blueprint bp = bpp.getBlueprint(author, bpName);
+        bpp.updateBlueprint(newAuthor, newName, newPoints, bp);
+    }
+
+
     public Set<Blueprint> getAllBlueprints() throws BlueprintNotFoundException{
         return bpp.getAllBlueprints();
     }
@@ -114,4 +132,6 @@ public class BlueprintsServices {
         return filteredList;
         //throw new UnsupportedOperationException("Not supported yet."); 
     }
+
+    
 }

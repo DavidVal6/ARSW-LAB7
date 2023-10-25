@@ -122,6 +122,7 @@ var MiModulo = (function () {
       ],
       name: "Jaja Salu2",
     },
+    
   ];
 
   // Variables privada
@@ -182,12 +183,9 @@ var MiModulo = (function () {
       console.log("Received blueprints:", bps);
       if (bps) {
         var bpMap = mapToTable(bps);
-        //console.log(bpMap)
-
         var puntosTotales = bpMap.reduce(function (acc, current) {
-          return acc + current.points.length; // Suma la longitud de puntos
+          return acc + current.npointsBp; // Suma la cantidad de puntos de cada plano
         }, 0);
-
         console.log("Total points:", puntosTotales);
         $("#totalPoints").text(puntosTotales);
       }
@@ -250,7 +248,39 @@ var MiModulo = (function () {
     }
     return bps; // Devuelve bps al final de la función
   }
-
+  function saveBlueprint() {
+    var canvas = document.getElementById("myCanvas");
+    var author = getAuthorName();
+    var name = "BlueprintName"; // Reemplaza con el nombre del plano
+    var newAuthor = "NewAuthorName"; // Reemplaza con el nuevo autor
+    var newName = "NewBlueprintName"; // Reemplaza con el nuevo nombre del plano
+    var points = currentCanvasPoints;
+  
+    var blueprintData = {
+      author: author,
+      name: name,
+      newAuthor: newAuthor,
+      newName: newName,
+      newPoints: points.map(point => ({ x: point.x, y: point.y })),
+    };
+  
+    var blueprintJSON = JSON.stringify(blueprintData);
+  
+    // Realiza una petición PUT al API para guardar o actualizar el plano
+    $.ajax({
+      url: "/blueprints/updateBp", // Ruta correcta para la actualización del plano
+      type: 'PUT',
+      data: blueprintJSON,
+      contentType: "application/json",
+      success: function () {
+        console.log("Blueprint saved/updated successfully.");
+        getBlueprints(); // Realiza un GET para obtener los planos actualizados
+      },
+      error: function (error) {
+        console.error("Error al guardar/actualizar el plano: " + error);
+      }
+    });
+  }
   function buttonFunct(button, bps) {
     for (var element in bps) {
       if (bps[element]["name"] === button.id) {
@@ -292,6 +322,7 @@ var MiModulo = (function () {
   });
 
   return {
+    
     getBlueprintsByAuthor: function (authname, callback) {
       callback(mockdata[authname]);
     },
@@ -305,19 +336,20 @@ var MiModulo = (function () {
     },
 
     init: function () {
-        console.info("initialized");
-        var canvas = document.getElementById("myCanvas");
-        canvas.setAttribute("data-selected-canvas", "false");
-      
-        canvas.addEventListener("click", function () {
-          canvas.setAttribute("data-selected-canvas", "true");
-        });
-      
-        captureClickEvent();
-      },
+      console.info("initialized");
+      var canvas = document.getElementById("myCanvas");
+      canvas.setAttribute("data-selected-canvas", "false");
+
+      canvas.addEventListener("click", function () {
+        canvas.setAttribute("data-selected-canvas", "true");
+      });
+
+      captureClickEvent();
+    },
 
     getAuthorName: getAuthorName,
     setAuthorName: setAuthorName,
     uptadeTable: uptadeTable,
+    saveBlueprint: saveBlueprint,
   };
 })();
