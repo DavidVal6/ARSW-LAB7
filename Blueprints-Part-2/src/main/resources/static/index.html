@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blueprints</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/App.js"></script>
+        <script src="js/apimock.js"></script>
+        <link rel="stylesheet"
+        href="/webjars/bootstrap/5.3.2/css/bootstrap.min.css" />
+    </head>
+    
+    <body>
+        <h1>Blueprints</h1>
+        <label for="authorInput">Autor:</label>
+        <input  type="text" id="authorName" placeholder="Escribe algo..." label="Autor">
+        <button onclick="MiModulo.setAuthorName(document.getElementById('authorName').value); MiModulo.uptadeTable();" class="getPrintsButton">Get Blueprints</button>
+
+        <h2>Blueprints</h2>
+        <table id="blueprintTable" class="tabla">
+            <tr>
+              <th>Blueprint Name</th>
+              <th>Number of Points</th>
+              <!-- <th><button id="openButton">Open</button></th> -->
+              <th>Buttons</th>
+            </tr>
+            <tr>
+              <td>Alfreds Futterkiste</td>
+              <td>Maria Anders</td>
+              <td>Germany</td>
+            </tr>
+            <tr>
+              <td>Centro comercial Moctezuma</td>
+              <td>Francisco Chang</td>
+              <td>Mexico</td>
+            </tr>
+          </table>
+          <p>Total de puntos: <span id="totalPoints">0</span></p>
+          <center><canvas id="myCanvas" width="500" height="500" style="border:1px solid #000000;"></canvas></center>
+    </body>
+</html>
