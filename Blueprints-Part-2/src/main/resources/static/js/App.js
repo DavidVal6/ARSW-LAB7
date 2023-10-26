@@ -195,6 +195,8 @@ var MiModulo = (function () {
   function captureClickEvent() {
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
+    // Limpia todo el contenido del canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     canvas.addEventListener("click", function (event) {
       if (canvas.getAttribute("data-selected-canvas") === "true") {
@@ -359,12 +361,66 @@ var MiModulo = (function () {
       success: function () {
         console.log("Blueprint saved/updated successfully.");
         getBlueprints(); // Realiza un GET para obtener los planos actualizados
-        setTimeout(function() {
-          window.location.reload();
-        }, 1000);
-      },
+        var canvas = document.getElementById("myCanvas");
+        var contexto = canvas.getContext("2d");
+        // Limpia todo el contenido del canvas
+        contexto.clearRect(0, 0, canvas.width, canvas.height);
+          },
       error: function (error) {
         console.error("Error al guardar/actualizar el plano: " + error);
+      }
+    });
+  }
+
+  var nombre;
+
+  function createNewBlueprint() {
+    document.getElementById("saveNew").style.display = "inline-block";
+    document.getElementById("saveUpdate").style.display = "none";
+    document.getElementById("createNew").style.display = "none";
+    // Limpia Pantalla
+    var canvas = document.getElementById("myCanvas");
+    var contexto = canvas.getContext("2d");
+    // Limpia todo el contenido del canvas
+    contexto.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Pedir Nombre
+    nombre = prompt("Por favor, ingrese el nombre del Plano:");
+    if (nombre !== null) {
+      console.log("Nombre: " + nombre);
+    } else {
+      console.log("El usuario canceló la entrada de información.");
+    }
+
+  }
+
+  function saveNewBlueprint() {
+    document.getElementById("saveNew").style.display = "none";
+    document.getElementById("saveUpdate").style.display = "inline-block";
+    document.getElementById("createNew").style.display = "inline-block";
+
+    // Guardar Plano
+    var points = currentCanvasPoints;
+
+    var blueprintData = {
+      author: "Anonymus",
+      name: nombre,
+      points: points.map(point => ({ x: parseInt(point.x), y: parseInt(point.y) }))
+    };
+  
+    var blueprintJSON = JSON.stringify(blueprintData);
+
+    return $.ajax({
+      url: "/blueprints/addBp", // Ruta correcta para la creación del plano
+      type: 'POST',
+      data: blueprintJSON,
+      contentType: "application/json",
+      success: function () {
+        console.log("Blueprint created successfully.");
+        getBlueprints();
+      },
+      error: function (error) {
+        console.error("Error al crear el plano: " + error);
       }
     });
   }
@@ -402,5 +458,7 @@ var MiModulo = (function () {
     setAuthorName: setAuthorName,
     uptadeTable: uptadeTable,
     saveBlueprint: saveBlueprint,
+    createNewBlueprint: createNewBlueprint,
+    saveNewBlueprint: saveNewBlueprint
   };
 })();
