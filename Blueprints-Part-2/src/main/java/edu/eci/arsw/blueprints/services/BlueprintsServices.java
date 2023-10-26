@@ -133,5 +133,16 @@ public class BlueprintsServices {
         //throw new UnsupportedOperationException("Not supported yet."); 
     }
 
+    /**
+     * 
+     * @param author blueprint's author
+     * @param bpName blueprint's name
+     * @return all the blueprints of the given author
+     * @throws BlueprintNotFoundException if the given author doesn't exist
+     */
+    public void deleteBlueprint(String author, String bpName) throws BlueprintNotFoundException{
+        bpp.deleteBlueprint(author, bpName);
+    }
+
     
 }
