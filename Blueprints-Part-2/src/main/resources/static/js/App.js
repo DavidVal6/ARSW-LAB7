@@ -129,18 +129,27 @@ var MiModulo = (function () {
   var authorName;
   var blueprintName;
   var blueprints = [];
+  var pointList = null;
   // blueprints.push({ bluprintName: "Tupla1", numberOfPoints: 10});
   // Función pública para obtener el valor de la variable privada
   function getAuthorName() {
     return authorName;
   }
 
+  function getPointlist(){
+    return pointList;
+  }
+
+  function setPointList(pointlist){
+    pointList = pointlist;
+  }
+
   function getBluePrintName(){
     return blueprintName;
   }
 
-  function setBluePrintName(blueprintName){
-    blueprintName = blueprintName;
+  function setBluePrintName(blueprintname){
+    blueprintName = blueprintname;
   }
 
   // Función pública para establecer el valor de la variable privada
@@ -151,39 +160,38 @@ var MiModulo = (function () {
   function uptadeTable() {
     MiModulo.getBlueprintsByAuthor(authorName, getBlueprints);
   }
+
   function buttonFunct(button, bps) {
+    
     for (var element in bps) {
-      if (bps[element]["name"] === button.id) {
-        var pointList = bps[element]["points"];
-        blueprintName = button.id; // Establece el nombre del blueprint
+      if (bps[element].name === button.id) {
+        console.log("entreAlIf");
+        setPointList(bps[element].points);
+        setBluePrintName(bps[element].name);
+        console.log(getBluePrintName());
       }
     }
   
-    console.log(pointList);
-    console.log(blueprintName);
-    console.log("Si entre");
+    if (pointList) {
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
   
-    var c = document.getElementById("myCanvas");
-    var ctx = c.getContext("2d");
+      var grd = ctx.createLinearGradient(0, 0, 200, 0);
+      grd.addColorStop(0, "white");
+      grd.addColorStop(1, "white");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, c.width, c.height);
   
-    var grd = ctx.createLinearGradient(0, 0, 200, 0);
-    grd.addColorStop(0, "white");
-    grd.addColorStop(1, "white");
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, c.width, c.height);
+      ctx.moveTo(pointList[0].x, pointList[0].y);
   
-    ctx.moveTo(pointList[0]["x"], pointList[0]["y"]);
-  
-    console.log(pointList[0]["x"], pointList[0]["y"]);
-  
-    for (var points of pointList) {
-      ctx.lineTo(points["x"], points["y"]);
-      ctx.stroke();
+      for (var i = 1; i < pointList.length; i++) {
+        var points = pointList[i];
+        ctx.lineTo(points.x, points.y);
+        ctx.stroke();
+      }
     }
-  
-    // Almacena el nombre del blueprint seleccionado
-    setBluePrintName(blueprintName);
   }
+  
   function captureClickEvent() {
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
@@ -305,7 +313,7 @@ var MiModulo = (function () {
 
       button.setAttribute("id", elemento.name);
       button.onclick = function () {
-        buttonFunct(this, bps);
+           buttonFunct(this, bps)
       };
 
       //button.addEventListener("click", function () {
@@ -322,25 +330,28 @@ var MiModulo = (function () {
     return bps; // Devuelve bps al final de la función
   }
   function saveBlueprint() {
+    console.log(getBluePrintName());
     var canvas = document.getElementById("myCanvas");
     var author = getAuthorName();
-    var name = "Jaja Salu2"; // Reemplaza con el nombre del plano
+    var name = getBluePrintName(); // Reemplaza con el nombre del plano
     var newAuthor = getAuthorName(); // Reemplaza con el nuevo autor
-    var newName = "Jaja Salu2"; // Reemplaza con el nuevo nombre del plano
+    var newName = getBluePrintName(); // Reemplaza con el nuevo nombre del plano
     var points = currentCanvasPoints;
+    var oldPoints = getPointlist();
+    var allPoints = oldPoints.concat(points);
   
     var blueprintData = {
       author: author,
       name: name,
       newAuthor: newAuthor,
       newName: newName,
-      newPoints: points.map(point => ({ x: parseInt(point.x), y: parseInt(point.y) }))
+      newPoints: allPoints.map(point => ({ x: parseInt(point.x), y: parseInt(point.y) }))
     };
   
     var blueprintJSON = JSON.stringify(blueprintData);
   
     // Realiza una petición PUT al API para guardar o actualizar el plano
-    $.ajax({
+    return $.ajax({
       url: "/blueprints/updateBp", // Ruta correcta para la actualización del plano
       type: 'PUT',
       data: blueprintJSON,
@@ -348,41 +359,16 @@ var MiModulo = (function () {
       success: function () {
         console.log("Blueprint saved/updated successfully.");
         getBlueprints(); // Realiza un GET para obtener los planos actualizados
+        setTimeout(function() {
+          window.location.reload();
+        }, 1000);
       },
       error: function (error) {
         console.error("Error al guardar/actualizar el plano: " + error);
       }
     });
   }
-  function buttonFunct(button, bps) {
-    for (var element in bps) {
-      if (bps[element]["name"] === button.id) {
-        var pointList = bps[element]["points"];
-      }
-    }
-
-    console.log(pointList);
-
-    var c = document.getElementById("myCanvas");
-    var ctx = c.getContext("2d");
-
-    var grd = ctx.createLinearGradient(0, 0, 200, 0);
-    grd.addColorStop(0, "white");
-    grd.addColorStop(1, "white");
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, c.width, c.height);
-
-    //ctx.clearRect(0, 0, c.width, c.height);
-
-    ctx.moveTo(pointList[0]["x"], pointList[0]["y"]);
-
-    console.log(pointList[0]["x"], pointList[0]["y"]);
-
-    for (var points of pointList) {
-      ctx.lineTo(points["x"], points["y"]);
-      ctx.stroke();
-    }
-  }
+  
 
   // Asignar eventos de clic después de que se cargue el DOM
   $(document).ready(function () {
