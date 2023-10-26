@@ -127,11 +127,20 @@ var MiModulo = (function () {
 
   // Variables privada
   var authorName;
+  var blueprintName;
   var blueprints = [];
   // blueprints.push({ bluprintName: "Tupla1", numberOfPoints: 10});
   // Función pública para obtener el valor de la variable privada
   function getAuthorName() {
     return authorName;
+  }
+
+  function getBluePrintName(){
+    return blueprintName;
+  }
+
+  function setBluePrintName(blueprintName){
+    blueprintName = blueprintName;
   }
 
   // Función pública para establecer el valor de la variable privada
@@ -141,6 +150,39 @@ var MiModulo = (function () {
 
   function uptadeTable() {
     MiModulo.getBlueprintsByAuthor(authorName, getBlueprints);
+  }
+  function buttonFunct(button, bps) {
+    for (var element in bps) {
+      if (bps[element]["name"] === button.id) {
+        var pointList = bps[element]["points"];
+        blueprintName = button.id; // Establece el nombre del blueprint
+      }
+    }
+  
+    console.log(pointList);
+    console.log(blueprintName);
+    console.log("Si entre");
+  
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+  
+    var grd = ctx.createLinearGradient(0, 0, 200, 0);
+    grd.addColorStop(0, "white");
+    grd.addColorStop(1, "white");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, c.width, c.height);
+  
+    ctx.moveTo(pointList[0]["x"], pointList[0]["y"]);
+  
+    console.log(pointList[0]["x"], pointList[0]["y"]);
+  
+    for (var points of pointList) {
+      ctx.lineTo(points["x"], points["y"]);
+      ctx.stroke();
+    }
+  
+    // Almacena el nombre del blueprint seleccionado
+    setBluePrintName(blueprintName);
   }
   function captureClickEvent() {
     var canvas = document.getElementById("myCanvas");
@@ -157,6 +199,37 @@ var MiModulo = (function () {
     });
   }
   var currentCanvasPoints = [];
+  function getBlueprintsByAuthor(authorName, callback) {
+    fetch("/blueprints/" + authorName) // Reemplaza la URL con la ruta correcta de tu API
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        callback(data);
+      })
+      .catch(function (error) {
+        console.error("Error fetching blueprints:", error);
+      });
+  }
+
+  function getBlueprintsByNameAndAuthor(authorName, blueprintName, callback) {
+    fetch("/blueprints/" + authorName + "/" + blueprintName) // Reemplaza la URL con la ruta correcta de tu API
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        callback(data);
+      })
+      .catch(function (error) {
+        console.error("Error fetching blueprint:", error);
+      });
+  }
 
   function addPointToCurrentCanvas(x, y) {
     currentCanvasPoints.push({ x, y });
@@ -251,9 +324,9 @@ var MiModulo = (function () {
   function saveBlueprint() {
     var canvas = document.getElementById("myCanvas");
     var author = getAuthorName();
-    var name = "BlueprintName"; // Reemplaza con el nombre del plano
-    var newAuthor = "NewAuthorName"; // Reemplaza con el nuevo autor
-    var newName = "NewBlueprintName"; // Reemplaza con el nuevo nombre del plano
+    var name = "Jaja Salu2"; // Reemplaza con el nombre del plano
+    var newAuthor = getAuthorName(); // Reemplaza con el nuevo autor
+    var newName = "Jaja Salu2"; // Reemplaza con el nuevo nombre del plano
     var points = currentCanvasPoints;
   
     var blueprintData = {
@@ -261,7 +334,7 @@ var MiModulo = (function () {
       name: name,
       newAuthor: newAuthor,
       newName: newName,
-      newPoints: points.map(point => ({ x: point.x, y: point.y })),
+      newPoints: points.map(point => ({ x: parseInt(point.x), y: parseInt(point.y) }))
     };
   
     var blueprintJSON = JSON.stringify(blueprintData);
@@ -323,17 +396,8 @@ var MiModulo = (function () {
 
   return {
     
-    getBlueprintsByAuthor: function (authname, callback) {
-      callback(mockdata[authname]);
-    },
-
-    getBlueprintsByNameAndAuthor: function (authname, bpname, callback) {
-      callback(
-        mockdata[authname].find(function (e) {
-          return e.name === bpname;
-        })
-      );
-    },
+    getBlueprintsByAuthor: getBlueprintsByAuthor,
+    getBlueprintsByNameAndAuthor: getBlueprintsByNameAndAuthor,
 
     init: function () {
       console.info("initialized");
@@ -348,6 +412,7 @@ var MiModulo = (function () {
     },
 
     getAuthorName: getAuthorName,
+    getBluePrintName:getBluePrintName,
     setAuthorName: setAuthorName,
     uptadeTable: uptadeTable,
     saveBlueprint: saveBlueprint,
