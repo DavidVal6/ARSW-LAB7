@@ -175,13 +175,6 @@ var MiModulo = (function () {
     if (pointList) {
       var c = document.getElementById("myCanvas");
       var ctx = c.getContext("2d");
-  
-      var grd = ctx.createLinearGradient(0, 0, 200, 0);
-      grd.addColorStop(0, "white");
-      grd.addColorStop(1, "white");
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, c.width, c.height);
-  
       ctx.moveTo(pointList[0].x, pointList[0].y);
   
       for (var i = 1; i < pointList.length; i++) {
@@ -194,9 +187,6 @@ var MiModulo = (function () {
   
   function captureClickEvent() {
     var canvas = document.getElementById("myCanvas");
-    var ctx = canvas.getContext("2d");
-    // Limpia todo el contenido del canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     canvas.addEventListener("click", function (event) {
       if (canvas.getAttribute("data-selected-canvas") === "true") {
@@ -249,7 +239,9 @@ var MiModulo = (function () {
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //canvas.width = 500;
+    //canvas.height = 500;
+    //ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     var startPoint = currentCanvasPoints[0];
     ctx.moveTo(startPoint.x, startPoint.y);
@@ -267,7 +259,7 @@ var MiModulo = (function () {
       if (bps) {
         var bpMap = mapToTable(bps);
         var puntosTotales = bpMap.reduce(function (acc, current) {
-          return acc + current.npointsBp; // Suma la cantidad de puntos de cada plano
+          return acc + current.points.length; // Suma la cantidad de puntos de cada plano
         }, 0);
         console.log("Total points:", puntosTotales);
         $("#totalPoints").text(puntosTotales);
@@ -294,9 +286,9 @@ var MiModulo = (function () {
       tbody.removeChild(tbody.lastChild);
     }
 
-    var dct = {};
-
     for (var elemento of bps) {
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
       var author = elemento.author;
       var name = elemento.name;
       var npoints = elemento.points.length;
@@ -315,7 +307,11 @@ var MiModulo = (function () {
 
       button.setAttribute("id", elemento.name);
       button.onclick = function () {
-           buttonFunct(this, bps)
+        canvas.width = 500;
+        canvas.height = 500;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        currentCanvasPoints.splice(0, currentCanvasPoints.length);
+        buttonFunct(this, bps);
       };
 
       //button.addEventListener("click", function () {
@@ -364,6 +360,8 @@ var MiModulo = (function () {
         var canvas = document.getElementById("myCanvas");
         var contexto = canvas.getContext("2d");
         // Limpia todo el contenido del canvas
+        canvas.width = 500;
+        canvas.height = 500;
         contexto.clearRect(0, 0, canvas.width, canvas.height);
           },
       error: function (error) {
@@ -382,6 +380,8 @@ var MiModulo = (function () {
     var canvas = document.getElementById("myCanvas");
     var contexto = canvas.getContext("2d");
     // Limpia todo el contenido del canvas
+    canvas.width = 500;
+    canvas.height = 500;
     contexto.clearRect(0, 0, canvas.width, canvas.height);
 
     // Pedir Nombre
@@ -445,6 +445,8 @@ var MiModulo = (function () {
         var canvas = document.getElementById("myCanvas");
         var contexto = canvas.getContext("2d");
         // Limpia todo el contenido del canvas
+        canvas.width = 500;
+        canvas.height = 500;
         contexto.clearRect(0, 0, canvas.width, canvas.height);
           },
       error: function (error) {
