@@ -72,4 +72,12 @@ public interface BlueprintsPersistence {
      *    or any other low-level persistence error occurs.
      */
     public void updateBlueprint(String newAuthor, String newName, List<List<Integer>> newPoints, Blueprint bp) throws BlueprintNotFoundException;
+
+    /**
+     * @param author blueprint's author
+     * @param bprintname blueprint's author
+     * @throws BlueprintPersistenceException if a blueprint with the same name already exists,
+     *    or any other low-level persistence error occurs.
+     */
+    public void deleteBlueprint(String author, String bpName) throws BlueprintNotFoundException;
 }

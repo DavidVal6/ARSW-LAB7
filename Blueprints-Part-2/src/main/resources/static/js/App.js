@@ -424,6 +424,40 @@ var MiModulo = (function () {
       }
     });
   }
+
+  function deleteBlueprint() {
+    // Limpiar canvas
+
+
+    // Eliminar Blueprint
+
+    console.log(getBluePrintName());
+    var canvas = document.getElementById("myCanvas");
+    var author = getAuthorName();
+    var name = getBluePrintName(); // Reemplaza con el nombre del plano
+
+    return $.ajax({
+      url: "/blueprints/" + author + "/" + name, // Ruta correcta para la actualización del plano
+      type: 'DELETE',
+      success: function () {
+        console.log("Blueprint deleted successfully.");
+        getBlueprints(); // Realiza un GET para obtener los planos actualizados
+        var canvas = document.getElementById("myCanvas");
+        var contexto = canvas.getContext("2d");
+        // Limpia todo el contenido del canvas
+        contexto.clearRect(0, 0, canvas.width, canvas.height);
+          },
+      error: function (error) {
+        console.error("Error al guardar/actualizar el plano: " + error);
+      }
+    });
+
+    // GET a los planos disponibles
+    
+  
+    // Realiza una petición PUT al API para guardar o actualizar el plano
+    
+  }
   
 
   // Asignar eventos de clic después de que se cargue el DOM
@@ -459,6 +493,7 @@ var MiModulo = (function () {
     uptadeTable: uptadeTable,
     saveBlueprint: saveBlueprint,
     createNewBlueprint: createNewBlueprint,
-    saveNewBlueprint: saveNewBlueprint
+    saveNewBlueprint: saveNewBlueprint,
+    deleteBlueprint: deleteBlueprint
   };
 })();

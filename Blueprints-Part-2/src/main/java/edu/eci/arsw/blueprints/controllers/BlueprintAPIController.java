@@ -169,4 +169,15 @@ public class BlueprintAPIController {
         int y;
     }
 
+    @RequestMapping(value = "/{author}/{bpName}",method = RequestMethod.DELETE)
+    public ResponseEntity<?> manejadorDeleteBlueprint(@PathVariable String author, @PathVariable String bpName){
+        try {
+            bps.deleteBlueprint(author, bpName);
+            return new ResponseEntity<>("Eliminado exitosamente", HttpStatus.OK);
+        } catch (BlueprintNotFoundException ex) {
+            Logger.getLogger(BlueprintAPIController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>("Error bla bla bla", HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
